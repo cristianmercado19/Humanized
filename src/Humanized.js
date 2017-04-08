@@ -16,10 +16,92 @@ Humanized.Var.actionDictionary = Humanized.Var.actionDictionary || [];
 Humanized.Var.actionList = Humanized.Var.actionList || [];
 Humanized.Var.customActionList = Humanized.Var.customActionList || [];
 
+Humanized.Page = Humanized.Page || {
+    _createJavascriptLinkElement : function (url, callback){
+        var script = document.createElement('script');
 
-Humanized.Initializer = Humanized.Initializer || {
+        script.type = 'text/javascript';
+        script.src = url;
 
-    _globaStyle : function(){
+        // Then bind the event to the callback function.
+        // There are several events for cross browser compatibility.
+        if (callback){
+            script.onreadystatechange = callback;
+            script.onload = callback;
+        }
+
+        return script;
+    },
+
+    _createLinkElement : function (href){
+
+        var link = document.createElement('link');
+
+        link.rel='stylesheet';
+        link.type = 'text/css';
+        link.href = href;
+
+        return link;
+    },
+
+    _getHead : function (){
+        var head = document.getElementsByTagName('head')[0];
+
+        return head;
+    },
+
+    _createFont: function (fontAddress){
+        var font = this._createLinkElement(fontAddress);
+
+        return font;
+    },
+
+    addElementToHeader : function(elementToHead){
+        var header = this._getHead();
+
+        header.appendChild(elementToHead);
+    },
+
+    addFontElement: function(fontUrl){
+        var fontLink = this._createFont(fontUrl);
+        this.addElementToHeader(fontLink);
+    },
+
+    addJavascriptToHead : function(url, callback){
+        var scriptElement = this._createJavascriptLinkElement(url, callback);
+        this.addElementToHeader(scriptElement);
+    }
+
+};
+
+Humanized.FontInitializer = Humanized.FontInitializer ||{
+
+    _addGoogleFont : function(){
+        var googleFontUrl = "https://fonts.googleapis.com/css?family=Slabo+27px";
+        Humanized.Page.addFontElement(googleFontUrl);
+    },
+
+    init: function (){
+        this._addGoogleFont();
+    }
+};
+
+Humanized.IconInitializer = Humanized.IconInitializer ||{
+
+    _addMaterialIconsFont: function(){
+        var materialIconUrl = "https://fonts.googleapis.com/icon?family=Material+Icons";
+        Humanized.Page.addFontElement(materialIconUrl);
+    },
+
+    init : function () {
+        this._addMaterialIconsFont();
+    }
+
+};
+
+Humanized.StyleInitializer = Humanized.StyleInitializer || {
+
+    _globalStyle : function(){
 
         var style = `
         .sey-container {
@@ -83,23 +165,6 @@ Humanized.Initializer = Humanized.Initializer || {
         return style;
     },
 
-    _getHead : function (){
-        var head = document.getElementsByTagName('head')[0];
-
-        return head;
-    },
-
-    _createLinkElement : function (href){
-
-        var link = document.createElement('link');
-
-        link.rel='stylesheet';
-        link.type = 'text/css';
-        link.href = href;
-
-        return link;
-    },
-
     _createStyleElement : function(css){
         var style = document.createElement('style');
 
@@ -109,65 +174,27 @@ Humanized.Initializer = Humanized.Initializer || {
         return style;
     },
 
-    _createJavascriptLinkElement : function (url, callback){
-        var script = document.createElement('script');
-
-        script.type = 'text/javascript';
-        script.src = url;
-
-        // Then bind the event to the callback function.
-        // There are several events for cross browser compatibility.
-        if (callback){
-            script.onreadystatechange = callback;
-            script.onload = callback;
-        }
-
-        return script;
-    },
-
-    _createFont: function (fontAddress){
-        var font = this._createLinkElement(fontAddress);
-
-        return font;
-    },
-
-    _addElementToHeader : function(elementToHead){
-        var header = this._getHead();
-
-        header.appendChild(elementToHead);
-    },
-
-    _addFontElement: function(fontUrl){
-        var fontLink = this._createFont(fontUrl);
-        this._addElementToHeader(fontLink);
-    },
-
     _addStyle : function(style){
         var styleElement = this._createStyleElement(style);
 
-        this._addElementToHeader(styleElement);
+        Humanized.Page.addElementToHeader(styleElement);
     },
 
-    _addGoogleFont : function(){
-        var googleFontUrl = "https://fonts.googleapis.com/css?family=Slabo+27px";
-        this._addFontElement(googleFontUrl);
+    _addGlobalStyle : function(){
+        var style = this._globalStyle();
+        this._addStyle(style);
     },
 
-    _addMaterialIconsFont: function(){
-        var materialIconUrl = "https://fonts.googleapis.com/icon?family=Material+Icons";
-        this._addFontElement(materialIconUrl);
-    },
+    init: function(){
+        this._addGlobalStyle();
+    }
+};
 
-    _addJavascriptToHead : function(url, callback){
-        var scriptElement = this._createJavascriptLinkElement(url, callback);
-        this._addElementToHeader(scriptElement);
-    },
+Humanized.ToastyInitializer = Humanized.ToastyInitializer || {
 
     _addToastLibrary : function(){
         var styles = "https://cdn.rawgit.com/dolce/iziToast/master/dist/css/iziToast.min.css";
-        this._addFontElement(styles);
-
-        var toastUrl = "https://cdn.rawgit.com/dolce/iziToast/master/dist/js/iziToast.min.js";
+        Humanized.Page.addFontElement(styles);
 
         var callback = function(){
             iziToast.settings({
@@ -179,24 +206,58 @@ Humanized.Initializer = Humanized.Initializer || {
 
         };
 
-        this._addJavascriptToHead(toastUrl);
+        var toastUrl = "https://cdn.rawgit.com/dolce/iziToast/master/dist/js/iziToast.min.js";
+
+        Humanized.Page.addJavascriptToHead(toastUrl, callback);
     },
+
+    init : function(){
+        this._addToastLibrary();
+    }
+};
+
+Humanized.MouseTrapInitializer = Humanized.MouseTrapInitializer || {
 
     _addShortLibrary : function(){
         var shortCutUrl = "https://cdn.rawgit.com/ccampbell/mousetrap/master/mousetrap.min.js";
-        this._addJavascriptToHead(shortCutUrl);
+        Humanized.Page.addJavascriptToHead(shortCutUrl);
     },
 
-    _addGlobalStyle : function(){
-        var style = this._globaStyle();
-        this._addStyle(style);
-    },
+    init : function(){
+        this._addShortLibrary();
+    }
+};
+
+Humanized.JQueryInitializer = Humanized.JQueryInitializer || {
 
     _addJQueryLibrary : function(callBack){
-        var jquerUrl = "https://code.jquery.com/jquery-3.1.1.min.js";
+        var jQueryUrl = "https://code.jquery.com/jquery-3.1.1.min.js";
 
-        this._addJavascriptToHead(jquerUrl, callBack);
+        Humanized.Page.addJavascriptToHead(jQueryUrl, callBack);
     },
+
+    init : function (callback) {
+
+        this._addJQueryLibrary(callback);
+    }
+};
+
+Humanized.HorseyInitializer = Humanized.HorseyInitializer || {
+
+    _addAutocompleteLibrary : function(callback){
+
+        var horseyUrl = "https://bevacqua.github.io/horsey/dist/horsey.js";
+
+        Humanized.Page.addJavascriptToHead(horseyUrl, callback);
+    },
+
+    init : function (callback){
+        this._addAutocompleteLibrary(callback);
+
+    }
+};
+
+Humanized.Initializer = Humanized.Initializer || {
 
     _initializeSearchInput : function(){
         var searchInputId = Humanized.Var.searchInputId;
@@ -314,13 +375,6 @@ Humanized.Initializer = Humanized.Initializer || {
         });
     },
 
-    _addAutocompleteLibrary : function(callback){
-
-        var horseyUrl = "https://bevacqua.github.io/horsey/dist/horsey.js";
-
-        this._addJavascriptToHead(horseyUrl, callback);
-    },
-
     _addACustomAction : function(text, actionToCall){
         Humanized.Var.customActionList.push(text);
 
@@ -364,8 +418,10 @@ Humanized.Initializer = Humanized.Initializer || {
 
     _addShowAvailableActions : function(){
 
+        var me = this;
+
         var action = function(){
-            this._showAvailableActions();
+            me._showAvailableActions();
         };
 
         this._addACustomAction("show available actions", action);
@@ -472,13 +528,15 @@ Humanized.Initializer = Humanized.Initializer || {
 
     init : function(){
 
-        this._addGlobalStyle();
+        Humanized.StyleInitializer.init();
 
-        this._addGoogleFont();
-        this._addMaterialIconsFont();
+        Humanized.FontInitializer.init();
 
-        this._addToastLibrary();
-        this._addShortLibrary();
+        Humanized.IconInitializer.init();
+
+        Humanized.ToastyInitializer.init();
+
+        Humanized.MouseTrapInitializer.init();
 
         var me = this;
 
@@ -497,9 +555,10 @@ Humanized.Initializer = Humanized.Initializer || {
         };
 
         var callbackAfterAutocompleteLoad = function(){
-            me._addJQueryLibrary(callbackAfterJQueryLoad);
+
+            Humanized.JQueryInitializer.init(callbackAfterJQueryLoad);
         };
 
-        this._addAutocompleteLibrary(callbackAfterAutocompleteLoad);
+        Humanized.HorseyInitializer.init(callbackAfterAutocompleteLoad)
     }
 };
