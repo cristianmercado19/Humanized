@@ -587,7 +587,12 @@ Humanized.Initializer = Humanized.Initializer || {
 
             me._initializeShortLibrary();
 
-            //me._showAvailableActions();
+            iziToast.info({
+                title: 'Humanized Installed',
+                message: 'type [cmd] to open Humanized',
+                position: 'center',
+                balloon: true
+            });
         };
 
         var callbackAfterAutocompleteLoad = function(){
