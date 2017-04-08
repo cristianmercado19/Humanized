@@ -253,7 +253,174 @@ Humanized.HorseyInitializer = Humanized.HorseyInitializer || {
 
     init : function (callback){
         this._addAutocompleteLibrary(callback);
+    }
+};
 
+Humanized.Actions = Humanized.Actions || {
+    createKeyForDictionary: function(text){
+        var key = text.replace(/\s/g,  "-");
+
+        return key;
+    }
+};
+
+Humanized.Actions.Initializer = Humanized.Actions.Initializer || {
+
+    init : function (){
+        Humanized.Actions.AElements.Initializer.init();
+        Humanized.Actions.Custom.Initializer.init();
+    }
+};
+
+Humanized.Actions.Custom = Humanized.Actions.Custom || {};
+
+Humanized.Actions.Custom.Initializer = Humanized.Actions.Custom.Initializer || {
+
+    _addACustomAction : function(text, actionToCall){
+
+        var customActionText = "hz " + text;
+
+        Humanized.Var.customActionList.push(customActionText);
+
+        var keyTextInDictionary = Humanized.Actions.createKeyForDictionary(customActionText);
+
+        var actionManager = {};
+        actionManager.runAction = actionToCall;
+
+        Humanized.Var.actionDictionary[keyTextInDictionary] = actionManager;
+    },
+
+    _addGoBackAction: function(){
+
+        var action = function(){
+            window.history.back();
+        };
+
+        this._addACustomAction("go back", action);
+    },
+
+    _addGoForwardAction : function(){
+
+        var action = function(){
+            window.history.forward();
+        };
+
+        this._addACustomAction("go forward", action);
+    },
+
+    _showAvailableActions : function () {
+        var aActionAvailables = Humanized.Var.actionList.length;
+        var customActionAvailables = Humanized.Var.customActionList.length;
+
+        iziToast.info({
+            title: 'Actions',
+            message: 'A ref (' + aActionAvailables + ') and customs (' + customActionAvailables + ')',
+            position: 'topRight',
+            balloon: true
+        });
+    },
+
+    _addShowAvailableActions : function(){
+        var me = this;
+
+        var action = function(){
+            me._showAvailableActions();
+        };
+
+        this._addACustomAction("show available actions", action);
+    },
+
+    _addCloseWindowAction : function () {
+        var action = function () {
+            window.close();
+        };
+
+        this._addACustomAction("close current window", action);
+    },
+
+    _createListOfCustomActionsForAllPages: function(){
+        this._addGoBackAction();
+        this._addGoForwardAction();
+        this._addShowAvailableActions();
+        this._addCloseWindowAction();
+    },
+
+    init : function(){
+        this._createListOfCustomActionsForAllPages();
+    }
+};
+
+Humanized.Actions.AElements = Humanized.Actions.AElements|| {};
+
+Humanized.Actions.AElements.Initializer = Humanized.Actions.AElements.Initializer || {
+
+    _normalizeText: function(text){
+        var normalized = text;
+
+        normalized = normalized.toLowerCase();
+        normalized = normalized.replace(/(\r\n|\n|\r)/gm, " ");
+        normalized = normalized.trim();
+
+        return normalized;
+    },
+
+    _isAValidAction : function(aElement, text){
+
+        var isVisible = Humanized.Var.jq311(aElement).is(":visible");
+
+        var atLeastThreeCharacters = (text && text.length > 3);
+
+        var isAValidAction = (isVisible && atLeastThreeCharacters);
+
+        return isAValidAction;
+    },
+
+    _addAction: function (keyTextInDictionary, aElement, text) {
+        var actionManager = {};
+
+        actionManager.aElementToClick = aElement[0];
+        actionManager.runAction = function () {
+            this.aElementToClick.click();
+        };
+
+        Humanized.Var.actionDictionary[keyTextInDictionary] = actionManager;
+
+        Humanized.Var.actionList.push(text);
+    },
+
+    _addActionIfDoesNotExist: function (element, text) {
+        var keyTextInDictionary = Humanized.Actions.createKeyForDictionary(text);
+
+        var keyDoesNotExist = !Humanized.Var.actionDictionary[keyTextInDictionary];
+
+        if (keyDoesNotExist) {
+            this._addAction(keyTextInDictionary, element, text);
+        }
+    },
+
+    _createListOfActions: function(){
+
+        var me = this;
+
+        Humanized.Var.jq311("a").each(function( index ) {
+
+            var text = Humanized.Var.jq311(this).text();
+
+            var aElement = Humanized.Var.jq311(this);
+
+            text = me._normalizeText(text);
+
+            var isAValidAction = me._isAValidAction(this, text);
+
+            if (isAValidAction) {
+                me._addActionIfDoesNotExist(aElement, text);
+            }
+
+        });
+    },
+
+    init : function(){
+        this._createListOfActions();
     }
 };
 
@@ -312,136 +479,6 @@ Humanized.Initializer = Humanized.Initializer || {
         this._initializeAutoCompleteComponent();
     },
 
-    _createKeyForDictionary: function(text){
-        var key = text.replace(/\s/g,  "-");
-
-        return key;
-    },
-
-    _normalizeText: function(text){
-        var normalized = text;
-
-        normalized = normalized.toLowerCase();
-        normalized = normalized.replace(/(\r\n|\n|\r)/gm, " ");
-        normalized = normalized.trim();
-
-        return normalized;
-    },
-
-    _isAValidAction : function(aElement, text){
-
-        var isVisible = Humanized.Var.jq311(aElement).is(":visible");
-
-        var isAValidAction = (isVisible && (text && text.length > 3));
-
-        return isAValidAction;
-    },
-
-    _createListOfActions: function(){
-
-        var me = this;
-
-        Humanized.Var.jq311("a").each(function( index ) {
-
-            var text = Humanized.Var.jq311(this).text();
-
-            text = me._normalizeText(text);
-
-            var isAValidAction = me._isAValidAction(this, text);
-
-            if (isAValidAction) {
-
-                var keyTextInDictionary = me._createKeyForDictionary(text);
-
-                var keyDoesNotExist = !Humanized.Var.actionDictionary[keyTextInDictionary];
-
-                if (keyDoesNotExist) {
-
-                    var aElement = Humanized.Var.jq311(this);
-
-                    var actionManager = {};
-                    actionManager.aElementToClick = aElement[0];
-                    actionManager.runAction = function () {
-                        this.aElementToClick.click();
-                    };
-
-                    Humanized.Var.actionDictionary[keyTextInDictionary] = actionManager;
-
-                    Humanized.Var.actionList.push(text);
-
-                }
-            }
-
-        });
-    },
-
-    _addACustomAction : function(text, actionToCall){
-        Humanized.Var.customActionList.push(text);
-
-        var keyTextInDictionary = this._createKeyForDictionary(text);
-
-        var actionManager = {};
-        actionManager.runAction = actionToCall;
-
-        Humanized.Var.actionDictionary[keyTextInDictionary] = actionManager;
-    },
-
-    _addGoBackAction: function(){
-
-        var action = function(){
-            window.history.back();
-        };
-
-        this._addACustomAction("go back", action);
-    },
-
-    _addGoForwardAction : function(){
-
-        var action = function(){
-            window.history.forward();
-        };
-
-        this._addACustomAction("go forward", action);
-    },
-
-    _showAvailableActions : function () {
-        var aActionAvailables = Humanized.Var.actionList.length;
-        var customActionAvailables = Humanized.Var.customActionList.length;
-
-        iziToast.info({
-            title: 'Actions',
-            message: 'A ref (' + aActionAvailables + ') and customs (' + customActionAvailables + ')',
-            position: 'topRight',
-            balloon: true
-        });
-    },
-
-    _addShowAvailableActions : function(){
-
-        var me = this;
-
-        var action = function(){
-            me._showAvailableActions();
-        };
-
-        this._addACustomAction("show available actions", action);
-    },
-
-    _addCloseWindowAction : function () {
-        var action = function () {
-            window.close();
-        };
-
-        this._addACustomAction("close current window", action);
-    },
-
-    _createListOfCustomActionsForAllPages: function(){
-        this._addGoBackAction();
-        this._addGoForwardAction();
-        this._addShowAvailableActions();
-        this._addCloseWindowAction();
-    },
-
     _setCmdCommand : function(){
         var me = this;
 
@@ -487,7 +524,7 @@ Humanized.Initializer = Humanized.Initializer || {
 
                 me._showExecutedAction(textSelected);
 
-                var textKey = me._createKeyForDictionary(textSelected);
+                var textKey = Humanized.Actions.createKeyForDictionary(textSelected);
 
                 var aAction = Humanized.Var.actionDictionary[textKey];
 
@@ -544,14 +581,13 @@ Humanized.Initializer = Humanized.Initializer || {
 
             Humanized.Var.jq311 = $.noConflict(true);
 
-            me._createListOfActions();
-            me._createListOfCustomActionsForAllPages();
+            Humanized.Actions.Initializer.init();
 
             me._initializeSearch();
 
             me._initializeShortLibrary();
 
-            me._showAvailableActions();
+            //me._showAvailableActions();
         };
 
         var callbackAfterAutocompleteLoad = function(){
