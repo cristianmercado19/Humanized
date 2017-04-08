@@ -523,7 +523,9 @@ Humanized.ShortCutsInitializer = Humanized.ShortCutsInitializer || {
 
                 Humanized.InputInitializer.hideAndCleanControl();
 
-                aAction.runAction();
+                if(aAction.runAction) {
+                    aAction.runAction();
+                }
 
             }, 100);
 
