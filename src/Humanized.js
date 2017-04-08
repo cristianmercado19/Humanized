@@ -251,6 +251,13 @@ Humanized.HorseyInitializer = Humanized.HorseyInitializer || {
         Humanized.Page.addJavascriptToHead(horseyUrl, callback);
     },
 
+    getHorseyInput: function (){
+        var searchInputId = Humanized.Var.searchInputId;
+        var input = document.querySelector('#' + searchInputId);
+
+        return input;
+    },
+
     init : function (callback){
         this._addAutocompleteLibrary(callback);
     }
@@ -424,7 +431,25 @@ Humanized.Actions.AElements.Initializer = Humanized.Actions.AElements.Initialize
     }
 };
 
-Humanized.Initializer = Humanized.Initializer || {
+Humanized.InputInitializer = Humanized.InputInitializer || {
+
+    _initializeAutoCompleteComponent: function(){
+        var input = Humanized.HorseyInitializer.getHorseyInput();
+
+        Humanized.Var.horseyInstance= horsey(input, {
+            source: [{
+                id: 'A actions',
+                list: Humanized.Var.actionList
+            }, {
+                id: 'HZ Custom Actions',
+                list: Humanized.Var.customActionList
+            }]
+            ,noMatches: ":-(   no matches"
+            , blankSearch: true
+            , limit: 15
+        });
+
+    },
 
     _initializeSearchInput : function(){
         var searchInputId = Humanized.Var.searchInputId;
@@ -444,31 +469,6 @@ Humanized.Initializer = Humanized.Initializer || {
         Humanized.Var.jq311("body").append(Humanized.Var.searchDiv);
     },
 
-    _getHorseyInput: function (){
-        var searchInputId = Humanized.Var.searchInputId;
-        var input = document.querySelector('#' + searchInputId);
-
-        return input;
-    },
-
-    _initializeAutoCompleteComponent: function(){
-        var input = this._getHorseyInput();
-
-        Humanized.Var.horseyInstance= horsey(input, {
-                source: [{
-                    id: 'A actions',
-                    list: Humanized.Var.actionList
-                }, {
-                    id: 'Custom Actions for all pages',
-                    list: Humanized.Var.customActionList
-                }]
-                ,noMatches: ":-(   no matches"
-                , blankSearch: true
-                , limit: 15
-        });
-
-    },
-
     _initializeSearch : function(){
 
         this._initializeSearchInput();
@@ -479,19 +479,21 @@ Humanized.Initializer = Humanized.Initializer || {
         this._initializeAutoCompleteComponent();
     },
 
-    _setCmdCommand : function(){
-        var me = this;
+    hideAndCleanControl : function () {
 
-        Mousetrap.bind('c m d', function(e) {
+        Humanized.Var.horseyInstance.hide();
 
-            Humanized.Var.searchDiv.show();
-
-            var input = me._getHorseyInput();
-            input.focus();
-
-            return false;
+        Humanized.Var.searchDiv.fadeOut(2000, function () {
+            Humanized.Var.searchInput.val('');
         });
     },
+
+    init : function(){
+        this._initializeSearch();
+    }
+};
+
+Humanized.ShortCutsInitializer = Humanized.ShortCutsInitializer || {
 
     _showExecutedAction : function (actionName) {
         iziToast.success({
@@ -501,18 +503,9 @@ Humanized.Initializer = Humanized.Initializer || {
         });
     },
 
-    _hideAndCleanControl : function () {
-
-        Humanized.Var.horseyInstance.hide();
-
-        Humanized.Var.searchDiv.fadeOut(2000, function () {
-            Humanized.Var.searchInput.val('');
-        });
-    },
-
     _setEnterCommand : function () {
         var me = this;
-        var input = this._getHorseyInput();
+        var input = Humanized.HorseyInitializer.getHorseyInput();
 
         Mousetrap(input).bind('enter', function(e) {
 
@@ -528,7 +521,7 @@ Humanized.Initializer = Humanized.Initializer || {
 
                 var aAction = Humanized.Var.actionDictionary[textKey];
 
-                me._hideAndCleanControl();
+                Humanized.InputInitializer.hideAndCleanControl();
 
                 aAction.runAction();
 
@@ -538,9 +531,20 @@ Humanized.Initializer = Humanized.Initializer || {
         });
     },
 
+    _setCmdCommand : function(){
+        Mousetrap.bind('c m d', function(e) {
+
+            Humanized.Var.searchDiv.show();
+
+            var input = Humanized.HorseyInitializer.getHorseyInput();
+            input.focus();
+
+            return false;
+        });
+    },
+
     _setEscCommand : function () {
-        var me = this;
-        var input = this._getHorseyInput();
+        var input = Humanized.HorseyInitializer.getHorseyInput();
 
         Mousetrap(input).bind('esc', function(e) {
 
@@ -549,7 +553,7 @@ Humanized.Initializer = Humanized.Initializer || {
 
             setTimeout( function(){
 
-                me._hideAndCleanControl();
+                Humanized.InputInitializer.hideAndCleanControl();
 
             }, 100);
 
@@ -557,11 +561,14 @@ Humanized.Initializer = Humanized.Initializer || {
         });
     },
 
-    _initializeShortLibrary : function(){
+    init : function() {
         this._setCmdCommand();
         this._setEnterCommand();
         this._setEscCommand();
-    },
+    }
+};
+
+Humanized.Initializer = Humanized.Initializer || {
 
     init : function(){
 
@@ -583,9 +590,9 @@ Humanized.Initializer = Humanized.Initializer || {
 
             Humanized.Actions.Initializer.init();
 
-            me._initializeSearch();
+            Humanized.InputInitializer.init();
 
-            me._initializeShortLibrary();
+            Humanized.ShortCutsInitializer.init();
 
             iziToast.info({
                 title: 'Humanized Installed',
