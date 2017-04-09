@@ -12,12 +12,22 @@ Humanized gives you the posibility to execute actions easily.
 
 #### Use example
 - When you enter to a page, Humanized inject the behaviour and parse the html content
-
-<img src="https://raw.githubusercontent.com/cristianmercado19/Humanized/Screenshots/Humanized_01.png" />
-
+<img src="https://raw.github.com/cristianmercado19/Humanized/Screenshots/Humanized_01.png" />
 
 - Type cmd to open the web console
+<img src="https://raw.github.com/cristianmercado19/Humanized/Screenshots/Humanized_02.png" />
 
+- Type to filter and press enter to execute
+<img src="https://raw.github.com/cristianmercado19/Humanized/Screenshots/Humanized_03.png" />
+
+- Executing action
+<img src="https://raw.github.com/cristianmercado19/Humanized/Screenshots/Humanized_04.png" />
+
+- There are custom actions, all of these start with hz
+<img src="https://raw.github.com/cristianmercado19/Humanized/Screenshots/Humanized_05.png" />
+
+- Executing show available actions
+<img src="https://raw.github.com/cristianmercado19/Humanized/Screenshots/Humanized_06.png" />
 
 
 ___
