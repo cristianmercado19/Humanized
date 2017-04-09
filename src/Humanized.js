@@ -591,6 +591,15 @@ Humanized.ShortCutsInitializer = Humanized.ShortCutsInitializer || {
 
 Humanized.Initializer = Humanized.Initializer || {
 
+    _welcomeMessage: function(){
+        iziToast.info({
+            title: 'Humanized Installed',
+            message: 'type [cmd] to open Humanized',
+            position: 'bottomCenter',
+            balloon: true
+        });
+    },
+
     init : function(){
 
         Humanized.StyleInitializer.init();
@@ -615,12 +624,7 @@ Humanized.Initializer = Humanized.Initializer || {
 
             Humanized.ShortCutsInitializer.init();
 
-            iziToast.info({
-                title: 'Humanized Installed',
-                message: 'type [cmd] to open Humanized',
-                position: 'center',
-                balloon: true
-            });
+            me._welcomeMessage();
         };
 
         var callbackAfterAutocompleteLoad = function(){
