@@ -71,11 +71,16 @@ Using this script you will be able to apply Humanized to all pages (or a limited
 })();
 ```
 
+
+___
+### Special thanks
+- [Humanized Enso Launcher](https://github.com/GChristensen/enso-portable)
+- [Horsey](https://github.com/bevacqua/horsey)
+- [iziToast](https://github.com/dolce/iziToast)
+- [Mousetrap](https://github.com/ccampbell/mousetrap)
+
 ___
 ### Version Log
 
 - **v1.0.0**
   - Initial Version
-  
-  
-  
