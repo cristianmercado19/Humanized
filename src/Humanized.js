@@ -192,18 +192,26 @@ Humanized.StyleInitializer = Humanized.StyleInitializer || {
 
 Humanized.ToastyInitializer = Humanized.ToastyInitializer || {
 
-    _addToastLibrary : function(){
-        var styles = "https://cdn.rawgit.com/dolce/iziToast/master/dist/css/iziToast.min.css";
-        Humanized.Page.addFontElement(styles);
+    _addStyles : function() {
+        var stylesUrl = "https://cdn.rawgit.com/dolce/iziToast/master/dist/css/iziToast.min.css";
+        Humanized.Page.addFontElement(stylesUrl);
+    },
+
+    _setDefaultConfiguration : function(){
+        iziToast.settings({
+            timeout: 2000,
+            resetOnHover: true,
+            transitionIn: 'fadeInRight',
+            transitionOut: 'fadeOutUp'
+        });
+    },
+
+    _addJavaScriptLibrary : function(){
+
+        var me = this;
 
         var callback = function(){
-            iziToast.settings({
-                timeout: 2000,
-                resetOnHover: true,
-                transitionIn: 'fadeInRight',
-                transitionOut: 'fadeOutUp'
-            });
-
+            me._setDefaultConfiguration();
         };
 
         var toastUrl = "https://cdn.rawgit.com/dolce/iziToast/master/dist/js/iziToast.min.js";
@@ -212,7 +220,8 @@ Humanized.ToastyInitializer = Humanized.ToastyInitializer || {
     },
 
     init : function(){
-        this._addToastLibrary();
+        this._addStyles();
+        this._addJavaScriptLibrary();
     }
 };
 
@@ -503,6 +512,15 @@ Humanized.ShortCutsInitializer = Humanized.ShortCutsInitializer || {
         });
     },
 
+    _showIsNotAValidAction: function (invalidActionName) {
+        iziToast.error({
+            title: invalidActionName,
+            close: false,
+            position: 'bottomRight',
+            message: 'Is not an Action registered'
+        });
+    },
+
     _setEnterCommand : function () {
         var me = this;
         var input = Humanized.HorseyInitializer.getHorseyInput();
@@ -515,16 +533,17 @@ Humanized.ShortCutsInitializer = Humanized.ShortCutsInitializer || {
 
                 var textSelected = Humanized.Var.searchInput.val();
 
-                me._showExecutedAction(textSelected);
-
                 var textKey = Humanized.Actions.createKeyForDictionary(textSelected);
 
                 var aAction = Humanized.Var.actionDictionary[textKey];
 
                 Humanized.InputInitializer.hideAndCleanControl();
 
-                if(aAction.runAction) {
+                if(aAction && aAction.runAction) {
+                    me._showExecutedAction(textSelected);
                     aAction.runAction();
+                }else{
+                    me._showIsNotAValidAction(textSelected);
                 }
 
             }, 100);
