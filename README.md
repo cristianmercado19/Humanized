@@ -6,8 +6,8 @@ Inspired by [Humanized Enso Launcher](https://github.com/GChristensen/enso-porta
 
 Humanized gives you the posibility to execute actions easily.
 - Read all href attributes and generate an autocomplete list
-- call Humanized as a console
-- Use commands or find an action using smart filter
+- Call Humanized as a console typing 'cmd' in whatever website
+- Find the action using smart filter - ReSharper finding pattern
 - Execute it
 
 #### Use example
