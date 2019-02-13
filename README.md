@@ -4,10 +4,10 @@ Inspired by [Humanized Enso Launcher](https://github.com/GChristensen/enso-porta
 
 ### Description
 
-Humanized gives you the posibility to easily execute an action without the use of mouse.
-- Automaticaly a list of action is generated after parce your html page
+Humanized gives you the possibility to easily execute an action without the use of mouse.
+- Automatically a list of action is generated after parse your html page
 - All **href** attributes and **buttons** are collected to generate an autocomplete list
-- Typing 'cmd' an autocompleater is opened 
+- Typing 'cmd' an auto-completer is opened 
 - Find the action using smart filter
 - Execute it
 
