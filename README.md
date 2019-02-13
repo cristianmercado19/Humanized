@@ -4,36 +4,37 @@ Inspired by [Humanized Enso Launcher](https://github.com/GChristensen/enso-porta
 
 ### Description
 
-Humanized gives you the posibility to execute actions easily.
-- Read all href attributes and generate an autocomplete list
-- Call Humanized as a console typing 'cmd' in whatever website
-- Find the action using smart filter - ReSharper finding pattern
+Humanized gives you the posibility to easily execute an action without the use of mouse.
+- Automaticaly a list of action is generated after parce your html page
+- All **href** attributes and **buttons** are collected to generate an autocomplete list
+- Typing 'cmd' an autocompleater is opened 
+- Find the action using smart filter
 - Execute it
 
-#### Use example
+#### Demo
 - When you enter to a page, Humanized inject the behaviour and parse the html content
 <img src="https://github.com/cristianmercado19/Humanized/blob/master/Screenshots/Humanized01.png?raw=true" />
 
-- Type cmd to open the web console
+- Type **cmd** to open the *web console*
 <img src="https://github.com/cristianmercado19/Humanized/blob/master/Screenshots/Humanized02.png?raw=true" />
 
-- Type to filter and press enter to execute
+- Type any *text* to filter, select and press *enter* to execute
 <img src="https://github.com/cristianmercado19/Humanized/blob/master/Screenshots/Humanized03.png?raw=true" />
 
 - Executing action
 <img src="https://github.com/cristianmercado19/Humanized/blob/master/Screenshots/Humanized04.png?raw=true" />
 
-- There are custom actions, all of these start with hz
+- There are **custom commands**, all of these start with **hz**
 <img src="https://github.com/cristianmercado19/Humanized/blob/master/Screenshots/Humanized05.png?raw=true" />
 
-- Executing show available actions
+- EG, to show available actions
 <img src="https://github.com/cristianmercado19/Humanized/blob/master/Screenshots/Humanized06.png?raw=true" />
 
 
 ___
 ### Install
 
-#### Standard
+#### OPTION 1: Standard
 Include the reference in the Head tag
 
 ```
@@ -47,9 +48,12 @@ Call initialization after page has been loaded
 ```
 
 
-#### [Tampermonkey](http://tampermonkey.net/)
-It is a chrome version of legendary Greasemonkey.
-Using this script you will be able to apply Humanized to all pages (or a limited set)
+#### OPTION 2: [Tampermonkey](http://tampermonkey.net/)
+It is a chrome version of legendary **Greasemonkey**.
+Install this extension in your browser and add the script to apply it onto all desired web sites.
+Just update the match pattern in:
+// @match        http://*/*
+**Humanized** will be applied automatically
 
 ```
 // ==UserScript==
@@ -59,7 +63,6 @@ Using this script you will be able to apply Humanized to all pages (or a limited
 // @description  Shortcuts auto-generated for any web page... Inspired by Humanized Enso Launcher
 // @author       Cristian Mercado
 // @match        http://*/*
-// @match        https://*/*
 // @require      https://raw.githubusercontent.com/cristianmercado19/Humanized/master/src/Humanized.js
 // @grant        none
 // ==/UserScript==
